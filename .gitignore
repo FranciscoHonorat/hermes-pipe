@@ -1,0 +1,6 @@
+/bin/
+coverage.out
+coverage.html
+bench.txt
+old.txt
+new.txt
