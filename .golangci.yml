@@ -1,0 +1,18 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - errorlint
+    - gosec
+    - revive
+    - unused
+    - gocritic
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
