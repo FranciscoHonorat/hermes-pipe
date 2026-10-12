@@ -1,0 +1,107 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GOTOOLCHAIN: local
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: Test (-race)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Go version
+        run: go version
+
+      - name: Check go.mod and go.sum
+        run: |
+          go mod tidy -v
+          git diff --exit-code -- go.mod $(ls go.sum 2>/dev/null)
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -race -v ./...
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.14.0
+          install-mode: goinstall
+
+  vuln:
+    name: govulncheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
+  bench:
+    name: Benchmark (benchstat vs. base)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Install benchstat
+        run: go install golang.org/x/perf/cmd/benchstat@latest
+
+      - name: Benchmark PR
+        run: go test -run='^$' -bench=. -benchmem -count=10 ./... | tee "$RUNNER_TEMP/new.txt"
+
+      - name: Benchmark base
+        run: |
+          git checkout --quiet ${{ github.event.pull_request.base.sha }}
+          go test -run='^$' -bench=. -benchmem -count=10 ./... | tee "$RUNNER_TEMP/old.txt"
+
+      - name: benchstat
+        run: |
+          {
+            echo '## benchstat (base vs. PR)'
+            echo '```'
+            benchstat "$RUNNER_TEMP/old.txt" "$RUNNER_TEMP/new.txt"
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"

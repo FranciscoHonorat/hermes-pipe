@@ -1,6 +1,6 @@
-BINARY  := cascade
+BINARY  := hermes-pipe
 BIN_DIR := bin
-CMD     := ./cmd/cascade
+CMD     := ./cmd/hermes-pipe
 PKGS    ?= ./...
 
 FUZZ_PKG  ?=

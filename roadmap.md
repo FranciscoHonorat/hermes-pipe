@@ -1,4 +1,4 @@
-# cascade: roadmap de 14 semanas
+# hermes-pipe: roadmap de 14 semanas
 
 **Um processador de stream local em Go 1.27. Escopo pequeno, profundidade máxima.**
 
@@ -7,7 +7,7 @@ O pipeline é a desculpa; o objetivo é **entender Go por baixo**: runtime, sche
 **Cada semana vale sozinha.** Se você parar no fim de qualquer semana, tem (1) um binário que funciona e faz algo útil que não fazia antes, (2) um tópico de Go que explica sem consulta, (3) testes e ADR que fecham o que foi feito. Nenhuma semana é "preparação para a próxima".
 
 **Calendário:** semanas 0 a 13. A semana 8 é folga.
-**Fonte da verdade:** todo código do runtime e da stdlib é lido **na tag `go1.27`** (`$(go env GOROOT)/src`). Se um caminho citado mudou, ache o novo e anote no ADR.
+**Fonte da verdade:** todo código do runtime e da stdlib é lido **na tag `go1.27.2`** (`$(go env GOROOT)/src`). Se um caminho citado mudou, ache o novo e anote no ADR.
 
 ---
 
@@ -26,12 +26,12 @@ O pipeline é a desculpa; o objetivo é **entender Go por baixo**: runtime, sche
 **Camadas** (nenhuma seta ao contrário):
 
 ```
-cmd/cascade  →  internal/config  →  internal/pipeline, internal/stage/*  →  internal/event
+cmd/hermes-pipe  →  internal/config  →  internal/pipeline, internal/stage/*  →  internal/event
 ```
 
 - **Stage é uma função pura com estado opcional.** Recebe um `Event`, emite zero ou mais, ou devolve erro. Não conhece channels, contexto, config, relógio nem I/O. Stages com estado têm `Flush` no fim do stream.
 - **O runner é o único lugar com concorrência.** Ele cria e fecha os channels, propaga cancelamento, conta eventos e drena na ordem producer → stages → consumer.
-- **Stages não importam `pipeline` nem uns aos outros.** `cmd/cascade` é o único lugar que liga tudo.
+- **Stages não importam `pipeline` nem uns aos outros.** `cmd/hermes-pipe` é o único lugar que liga tudo.
 
 A arquitetura cresce de dentro para fora: semana 1 é `event` + `cmd`; semana 2 adiciona `stage` e um runner sequencial; semana 3 troca o runner por um concorrente **sem mudar nenhum Stage**. O runner sequencial nunca é apagado: vira o oráculo dos testes diferenciais.
 
@@ -71,7 +71,7 @@ Cada uma nasce na semana indicada e, dali em diante, tem um teste que falha quan
 
 **Valor isolado:** um template de repositório Go com CI que pega erro de verdade, reutilizável em qualquer projeto.
 
-**Construir:** `go.mod` (`go 1.27`), `cmd/cascade` com `main` vazio, `Makefile` (`test`, `lint`, `bench`, `fuzz`, `stress`), `.golangci.yml`, CI com jobs separados: teste com `-race`, lint, `govulncheck`, benchmark com `benchstat`.
+**Construir:** `go.mod` (`go 1.27`), `cmd/hermes-pipe` com `main` vazio, `Makefile` (`test`, `lint`, `bench`, `fuzz`, `stress`), `.golangci.yml`, CI com jobs separados: teste com `-race`, lint, `govulncheck`, benchmark com `benchstat`.
 
 **Por baixo:** diretivas `go` e `toolchain`, `GOTOOLCHAIN=local|auto`; o que o compilador faz com `internal/`; `go help test`, `go help testflag`. Release notes do 1.24 ao 1.27.
 
@@ -87,7 +87,7 @@ Cada uma nasce na semana indicada e, dali em diante, tem um teste que falha quan
 
 ## Semana 1 — Validador de JSON Lines
 
-**Valor isolado:** `cascade < in.jsonl > ok.jsonl 2> bad.jsonl` separa linhas válidas das inválidas, com o motivo, e imprime um resumo. Já é uma ferramenta útil para limpar logs.
+**Valor isolado:** `hermes-pipe < in.jsonl > ok.jsonl 2> bad.jsonl` separa linhas válidas das inválidas, com o motivo, e imprime um resumo. Já é uma ferramenta útil para limpar logs.
 
 **Construir:** o tipo `Event`, `ParseEvent([]byte) (Event, error)`, `Validate() error`, e um `main` sequencial: lê linha, valida, escreve. Invariante no godoc: `Time` sempre preenchido; sem timestamp é erro, não zero.
 
@@ -112,7 +112,7 @@ Cada uma nasce na semana indicada e, dali em diante, tem um teste que falha quan
 
 ## Semana 2 — `filter` e `map`: um jq mínimo
 
-**Valor isolado:** `cascade --filter 'level==error' --map 'rename:msg=message'` filtra e transforma logs. Útil no dia a dia, ainda sem concorrência.
+**Valor isolado:** `hermes-pipe --filter 'level==error' --map 'rename:msg=message'` filtra e transforma logs. Útil no dia a dia, ainda sem concorrência.
 
 **Construir:** a interface `Stage` e seu contrato, `filter`, `map`, e `RunSequential` (um laço `for` que passa cada evento pelos stages). Esse laço é guardado para sempre como oráculo.
 
@@ -161,7 +161,7 @@ Cada uma nasce na semana indicada e, dali em diante, tem um teste que falha quan
 
 ## Semana 4 — Por dentro do runner: scheduler, channels, memória
 
-**Valor isolado:** `cascade --stats` mostra throughput e contadores; o buffer padrão é escolhido por número, não por palpite; você responde com dados se o pipeline concorrente é mais rápido que o sequencial, e quando.
+**Valor isolado:** `hermes-pipe --stats` mostra throughput e contadores; o buffer padrão é escolhido por número, não por palpite; você responde com dados se o pipeline concorrente é mais rápido que o sequencial, e quando.
 
 **Construir:** contadores ao vivo (atomics) expostos em `--stats`; `BenchmarkPipeline_Buffer` e a tabela buffer × throughput em `PERFORMANCE.md`.
 
@@ -185,7 +185,7 @@ Cada uma nasce na semana indicada e, dali em diante, tem um teste que falha quan
 
 ## Semana 5 — Pipelines declarativos em YAML
 
-**Valor isolado:** `cascade run -c pipeline.yaml` com pipelines versionáveis e reutilizáveis; config errada falha **antes do primeiro evento**, citando linha e coluna.
+**Valor isolado:** `hermes-pipe run -c pipeline.yaml` com pipelines versionáveis e reutilizáveis; config errada falha **antes do primeiro evento**, citando linha e coluna.
 
 **Construir:** YAML estrito → pipeline via registro de construtores; `FileProducer`; `slog` para logs operacionais.
 
@@ -207,10 +207,10 @@ Cada uma nasce na semana indicada e, dali em diante, tem um teste que falha quan
 
 **Valor isolado:** um analisador estático próprio, só com stdlib, que roda sobre qualquer código Go e impõe as regras do projeto. Saber escrever um é útil em qualquer base de código.
 
-**Construir:** `cmd/cascade-lint` com três regras para `internal/stage/...`:
+**Construir:** `cmd/hermes-pipe-lint` com três regras para `internal/stage/...`:
 1. Não chama `time.Now`, `time.Since`, `time.After`, `math/rand` (I4, I5).
 2. Não declara nem recebe `chan`, `context.Context`, `*os.File`, `io.Writer` (I4).
-3. `range` sobre map só com chaves ordenadas na mesma função, ou `//cascade:unordered-ok <motivo>` (I5).
+3. `range` sobre map só com chaves ordenadas na mesma função, ou `//hermespipe:unordered-ok <motivo>` (I5).
 
 **Por baixo:** `go/parser`, `go/ast`, `go/types`, `go/importer`; por que `time.Now` só é identificável com tipos (alias de import); como o `go vet` organiza analisadores (leitura do `copylock`). Alan Donovan, *go/types: The Go Type Checker*.
 
@@ -228,7 +228,7 @@ Cada uma nasce na semana indicada e, dali em diante, tem um teste que falha quan
 
 ## Semana 7 — `aggregate`: contagem por chave com memória limitada
 
-**Valor isolado:** `cascade` responde "quem são os top N hosts/usuários/erros" sobre um arquivo de qualquer tamanho, sem estourar a memória, mesmo com milhões de chaves distintas.
+**Valor isolado:** `hermes-pipe` responde "quem são os top N hosts/usuários/erros" sobre um arquivo de qualquer tamanho, sem estourar a memória, mesmo com milhões de chaves distintas.
 
 **Construir:** agregação por chave (`count`, `sum`, `percentile`) emitida no `Flush`, com **teto de memória** e despejo determinístico e contado.
 
@@ -278,7 +278,7 @@ Nenhuma feature. Feche gates pendentes. Releia os ADRs 0001–0009 contra o cód
 
 ## Semana 10 — `dedup` e generics: quando a duplicação é real
 
-**Valor isolado:** `cascade` remove eventos repetidos (retries, logs duplicados) dentro de uma janela de tempo, com memória limitada. E o código fica menor: três stages passam a compartilhar uma estrutura genérica.
+**Valor isolado:** `hermes-pipe` remove eventos repetidos (retries, logs duplicados) dentro de uma janela de tempo, com memória limitada. E o código fica menor: três stages passam a compartilhar uma estrutura genérica.
 
 **Construir:** `dedup` (primeira ocorrência passa). Ele precisa da mesma estrutura com teto do `aggregate`, e o `window` já tem um ring buffer: **agora** existe duplicação real. Extraia `Bounded[K comparable, V any]` e `Ring[T]` com `All() iter.Seq[T]`.
 
@@ -298,7 +298,7 @@ Nenhuma feature. Feche gates pendentes. Releia os ADRs 0001–0009 contra o cód
 
 ## Semana 11 — `--workers N`: paralelismo, backpressure, race
 
-**Valor isolado:** `cascade --workers 8` processa mais rápido em máquina com vários núcleos, com a mesma saída de 1 worker, e não estoura a memória quando o destino é lento.
+**Valor isolado:** `hermes-pipe --workers 8` processa mais rápido em máquina com vários núcleos, com a mesma saída de 1 worker, e não estoura a memória quando o destino é lento.
 
 **Construir:** paralelismo dentro de um estágio, no runner (nunca no Stage). Ordem preservada por número de sequência + reordenação com buffer limitado. Stages com estado particionados por chave.
 
@@ -369,7 +369,7 @@ Nenhuma feature. Feche gates pendentes. Releia os ADRs 0001–0009 contra o cód
 | 3 | pipeline concorrente, `--limit`, Ctrl+C limpo | `context`, `WaitGroup`, `synctest` |
 | 4 | `--stats`, buffer medido | scheduler, `chan.go`, modelo de memória |
 | 5 | `-c pipeline.yaml` | decodificação estrita, registro |
-| 6 | `cascade-lint` | `go/ast`, `go/types` |
+| 6 | `hermes-pipe-lint` | `go/ast`, `go/types` |
 | 7 | top N por chave, memória limitada | alocador, GC, Swiss tables |
 | 9 | contagem por janela de tempo | tempo, watermark, timers |
 | 10 | `dedup` | generics, iteradores |
