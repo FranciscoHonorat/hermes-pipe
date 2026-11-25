@@ -1,0 +1,43 @@
+{"time":"2026-03-01T12:00:00Z","level":"info","host":"web-01","msg":"ok","latency_ms":10,"req_id":"r0"}
+{"time":"2026-03-01T12:00:07Z","level":"info","host":"db-01","msg":"upstream timeout","latency_ms":47,"req_id":"r1"}
+{"time":"2026-03-01T12:00:14Z","level":"error","host":"web-03","msg":"slow query","latency_ms":84,"req_id":"r2"}
+{"time":"2026-03-01T12:00:21Z","level":"warn","host":"web-02","msg":"retrying","latency_ms":121,"req_id":"r3"}
+{"time":"2026-03-01T12:00:28Z","level":"info","host":"web-01","msg":"ok","latency_ms":158,"req_id":"r4"}
+{"level":"error","host":"web-01","msg":"sem time"}
+{"time":"2026-03-01T12:00:35Z","level":"error","host":"db-01","msg":"upstream timeout","latency_ms":195,"req_id":"r2"}
+{"time":"2026-03-01T12:00:42Z","level":"info","host":"web-03","msg":"slow query","latency_ms":232,"req_id":"r6"}
+{"time":"2026-03-01T12:00:49Z","level":"info","host":"web-02","msg":"retrying","latency_ms":269,"req_id":"r7"}
+{"time":"2026-03-01T12:00:56Z","level":"error","host":"web-01","msg":"ok","latency_ms":306,"req_id":"r8"}
+{"time":"2026-03-01T12:01:03Z","level":"warn","host":"db-01","msg":"upstream timeout","latency_ms":343,"req_id":"r9"}
+{"time":"2026-03-01T12:01:10Z","level":"info","host":"web-03","msg":"slow query","latency_ms":380,"req_id":"r5"}
+isto não é json
+{"time":"2026-03-01T12:01:17Z","level":"error","host":"web-02","msg":"retrying","latency_ms":417,"req_id":"r11"}
+{"time":"2026-03-01T12:01:24Z","level":"info","host":"web-01","msg":"ok","latency_ms":454,"req_id":"r12"}
+{"time":"2026-03-01T12:01:31Z","level":"info","host":"db-01","msg":"upstream timeout","latency_ms":491,"req_id":"r13"}
+{"time":"2026-03-01T12:01:38Z","level":"error","host":"web-03","msg":"slow query","latency_ms":28,"req_id":"r14"}
+{"time":"2026-03-01T12:01:45Z","level":"warn","host":"web-02","msg":"retrying","latency_ms":65,"req_id":"r7"}
+{"time":"2026-03-01T12:01:52Z","level":"info","host":"web-01","msg":"ok","latency_ms":102,"req_id":"r16"}
+{"time":"2026-03-01T12:01:59Z","level":"error","host":"db-01","msg":"upstream timeout","latency_ms":139,"req_id":"r17"}
+{"time":"ontem","level":"info"}
+{"time":"2026-03-01T12:02:06Z","level":"info","host":"web-03","msg":"slow query","latency_ms":176,"req_id":"r18"}
+{"time":"2026-03-01T12:02:13Z","level":"info","host":"web-02","msg":"retrying","latency_ms":213,"req_id":"r19"}
+{"time":"2026-03-01T12:02:20Z","level":"error","host":"web-01","msg":"ok","latency_ms":250,"req_id":"r10"}
+{"time":"2026-03-01T12:02:27Z","level":"warn","host":"db-01","msg":"upstream timeout","latency_ms":287,"req_id":"r21"}
+{"time":"2026-03-01T12:02:34Z","level":"info","host":"web-03","msg":"slow query","latency_ms":324,"req_id":"r22"}
+{"time":"2026-03-01T12:02:41Z","level":"error","host":"web-02","msg":"retrying","latency_ms":361,"req_id":"r23"}
+{"time":"2026-03-01T12:02:48Z","level":"info","host":"web-01","msg":"ok","latency_ms":398,"req_id":"r24"}
+{"time":"2026-03-01T12:02:55Z","level":"info","host":"db-01","msg":"upstream timeout","latency_ms":435,"req_id":"r12"}
+{"time":"2026-03-01T12:03:02Z","level":"error","host":"web-03","msg":"slow query","latency_ms":472,"req_id":"r26"}
+{"time":"2026-03-01T12:03:09Z","level":"warn","host":"web-02","msg":"retrying","latency_ms":509,"req_id":"r27"}
+{"time":"2026-03-01T12:03:16Z","level":"info","host":"web-01","msg":"ok","latency_ms":46,"req_id":"r28"}
+{"time":"2026-03-01T12:03:23Z","level":"error","host":"db-01","msg":"upstream timeout","latency_ms":83,"req_id":"r29"}
+{"time":"2026-03-01T12:03:30Z","level":"info","host":"web-03","msg":"slow query","latency_ms":120,"req_id":"r15"}
+{"time":"2026-03-01T12:03:37Z","level":"info","host":"web-02","msg":"retrying","latency_ms":157,"req_id":"r31"}
+{"time":"2026-03-01T12:03:44Z","level":"error","host":"web-01","msg":"ok","latency_ms":194,"req_id":"r32"}
+{"time":"2026-03-01T12:03:51Z","level":"warn","host":"db-01","msg":"upstream timeout","latency_ms":231,"req_id":"r33"}
+{"time":"2026-03-01T12:03:58Z","level":"info","host":"web-03","msg":"slow query","latency_ms":268,"req_id":"r34"}
+{"time":"2026-03-01T12:04:05Z","level":"error","host":"web-02","msg":"retrying","latency_ms":305,"req_id":"r17"}
+{"time":"2026-03-01T12:04:12Z","level":"info","host":"web-01","msg":"ok","latency_ms":342,"req_id":"r36"}
+{"time":"2026-03-01T12:04:19Z","level":"info","host":"db-01","msg":"upstream timeout","latency_ms":379,"req_id":"r37"}
+{"time":"2026-03-01T12:04:26Z","level":"error","host":"web-03","msg":"slow query","latency_ms":416,"req_id":"r38"}
+{"time":"2026-03-01T12:04:33Z","level":"warn","host":"web-02","msg":"retrying","latency_ms":453,"req_id":"r39"}

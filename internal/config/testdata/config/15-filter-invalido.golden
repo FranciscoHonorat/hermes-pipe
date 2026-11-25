@@ -1,0 +1,1 @@
+erro: 15-filter-invalido.yaml:3:5: filter: "level": operador ausente (use ==, !=, <, <=, >, >=, =~ ou !~)

@@ -1,0 +1,14 @@
+--- stdout
+{"avg_latency_ms":194.8,"count":5,"level":"error","p50_latency_ms":139,"sum_latency_ms":974,"time":"2026-03-01T12:00:00Z","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"avg_latency_ms":266.625,"count":8,"level":"info","p50_latency_ms":232,"sum_latency_ms":2133,"time":"2026-03-01T12:00:00Z","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"avg_latency_ms":232,"count":2,"level":"warn","p50_latency_ms":121,"sum_latency_ms":464,"time":"2026-03-01T12:00:00Z","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"avg_latency_ms":272,"count":5,"level":"error","p50_latency_ms":250,"sum_latency_ms":1360,"time":"2026-03-01T12:02:00Z","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"avg_latency_ms":237.44444444444446,"count":9,"level":"info","p50_latency_ms":213,"sum_latency_ms":2137,"time":"2026-03-01T12:02:00Z","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"avg_latency_ms":342.3333333333333,"count":3,"level":"warn","p50_latency_ms":287,"sum_latency_ms":1027,"time":"2026-03-01T12:02:00Z","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"avg_latency_ms":360.5,"count":2,"level":"error","p50_latency_ms":305,"sum_latency_ms":721,"time":"2026-03-01T12:04:00Z","window_end":"2026-03-01T12:06:00Z","window_start":"2026-03-01T12:04:00Z"}
+{"avg_latency_ms":360.5,"count":2,"level":"info","p50_latency_ms":342,"sum_latency_ms":721,"time":"2026-03-01T12:04:00Z","window_end":"2026-03-01T12:06:00Z","window_start":"2026-03-01T12:04:00Z"}
+{"avg_latency_ms":453,"count":1,"level":"warn","p50_latency_ms":453,"sum_latency_ms":453,"time":"2026-03-01T12:04:00Z","window_end":"2026-03-01T12:06:00Z","window_start":"2026-03-01T12:04:00Z"}
+--- stderr
+{"line":6,"stage":"parse","error":"campo \"time\" ausente","raw":"{\"level\":\"error\",\"host\":\"web-01\",\"msg\":\"sem time\"}"}
+{"line":13,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
+{"line":21,"stage":"parse","error":"campo \"time\" inválido: \"ontem\"","raw":"{\"time\":\"ontem\",\"level\":\"info\"}"}

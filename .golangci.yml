@@ -11,6 +11,20 @@ linters:
     - revive
     - unused
     - gocritic
+  settings:
+    errcheck:
+      # Escrever no stdout/stderr de um CLI: se falhar, não há para onde reportar.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+  exclusions:
+    rules:
+      # Testes: subprocessos, arquivos golden e geradores determinísticos com
+      # seed são intencionais; nada disso roda em produção.
+      - path: _test\.go
+        linters: [gosec]
+        text: "G(115|204|301|304|306|404|703)"
 
 formatters:
   enable:

@@ -1,0 +1,10 @@
+# Remove retries duplicados, renomeia msg e corta nos 5 primeiros.
+version: 1
+stages:
+  - type: dedup
+    by: [req_id]
+    window: 5m
+  - type: map
+    ops: ["rename:msg=message", "delete:req_id"]
+  - type: limit
+    n: 5

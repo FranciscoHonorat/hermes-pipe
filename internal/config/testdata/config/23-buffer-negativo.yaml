@@ -1,0 +1,5 @@
+version: 1
+buffer: -1
+stages:
+  - type: limit
+    n: 1

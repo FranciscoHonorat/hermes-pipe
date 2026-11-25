@@ -1,0 +1,5 @@
+version: 1
+stages:
+  - type: dedup
+    by: [id]
+    window: amanha

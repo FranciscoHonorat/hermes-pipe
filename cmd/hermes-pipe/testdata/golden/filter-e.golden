@@ -1,0 +1,13 @@
+exit: 1
+--- stdout
+{"host":"web-01","latency_ms":306,"level":"error","msg":"ok","req_id":"r8","time":"2026-03-01T12:00:56Z"}
+{"host":"web-02","latency_ms":417,"level":"error","msg":"retrying","req_id":"r11","time":"2026-03-01T12:01:17Z"}
+{"host":"web-02","latency_ms":361,"level":"error","msg":"retrying","req_id":"r23","time":"2026-03-01T12:02:41Z"}
+{"host":"web-03","latency_ms":472,"level":"error","msg":"slow query","req_id":"r26","time":"2026-03-01T12:03:02Z"}
+{"host":"web-02","latency_ms":305,"level":"error","msg":"retrying","req_id":"r17","time":"2026-03-01T12:04:05Z"}
+{"host":"web-03","latency_ms":416,"level":"error","msg":"slow query","req_id":"r38","time":"2026-03-01T12:04:26Z"}
+--- stderr
+{"line":6,"stage":"parse","error":"campo \"time\" ausente","raw":"{\"level\":\"error\",\"host\":\"web-01\",\"msg\":\"sem time\"}"}
+{"line":13,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
+{"line":21,"stage":"parse","error":"campo \"time\" inválido: \"ontem\"","raw":"{\"time\":\"ontem\",\"level\":\"info\"}"}
+{"summary":{"read":43,"emitted":6,"dropped":34,"errored":3,"generated":0}}

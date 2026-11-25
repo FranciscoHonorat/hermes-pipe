@@ -1,0 +1,21 @@
+version: 1
+input: logs.jsonl
+buffer: 16
+workers: 4
+idle_flush: 30s
+max_line: 4096
+stages:
+  - type: filter
+    where: ["level != debug"]
+  - type: map
+    ops: ["rename:msg=message"]
+  - type: dedup
+    by: [id]
+    window: 1m
+  - type: window
+    size: 1m
+    lateness: 10s
+    by: [host]
+    metrics: [count, "p95:latency_ms"]
+  - type: limit
+    n: 100

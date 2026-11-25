@@ -1,0 +1,4 @@
+exit: 2
+--- stdout
+--- stderr
+hermes-pipe: filter: "level": operador ausente (use ==, !=, <, <=, >, >=, =~ ou !~)

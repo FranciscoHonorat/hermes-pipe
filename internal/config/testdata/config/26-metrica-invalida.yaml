@@ -1,0 +1,5 @@
+version: 1
+stages:
+  - type: aggregate
+    by: [host]
+    metrics: ["median:x"]

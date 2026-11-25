@@ -1,0 +1,4 @@
+exit: 2
+--- stdout
+--- stderr
+hermes-pipe run: use -c pipeline.yaml

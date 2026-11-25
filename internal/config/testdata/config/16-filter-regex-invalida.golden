@@ -1,0 +1,1 @@
+erro: 16-filter-regex-invalida.yaml:3:5: filter: "msg =~ (": error parsing regexp: missing closing ): `(`

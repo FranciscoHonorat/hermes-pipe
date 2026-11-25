@@ -1,0 +1,4 @@
+exit: 2
+--- stdout
+--- stderr
+hermes-pipe: internal/config/testdata/config/14-campo-stage-desconhecido.yaml:4:5: campo desconhecido "wher" (campos: where)

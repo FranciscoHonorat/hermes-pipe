@@ -1,0 +1,1 @@
+erro: 10-campo-topo-desconhecido.yaml:2:1: campo desconhecido "stagse" (campos: version, input, buffer, workers, idle_flush, max_line, stages)

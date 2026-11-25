@@ -1,0 +1,4 @@
+version: 1
+stages:
+  - type: filter
+    where: ["level"]

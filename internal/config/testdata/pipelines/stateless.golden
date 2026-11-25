@@ -1,0 +1,25 @@
+--- stdout
+{"host":"web-01","latency_ms":10,"level":"info","msg":"ok","time":"2026-03-01T12:00:00Z"}
+{"host":"web-03","latency_ms":84,"level":"error","msg":"slow query","time":"2026-03-01T12:00:14Z"}
+{"host":"web-01","latency_ms":158,"level":"info","msg":"ok","time":"2026-03-01T12:00:28Z"}
+{"host":"web-03","latency_ms":232,"level":"info","msg":"slow query","time":"2026-03-01T12:00:42Z"}
+{"host":"web-01","latency_ms":306,"level":"error","msg":"ok","time":"2026-03-01T12:00:56Z"}
+{"host":"web-03","latency_ms":380,"level":"info","msg":"slow query","time":"2026-03-01T12:01:10Z"}
+{"host":"web-01","latency_ms":454,"level":"info","msg":"ok","time":"2026-03-01T12:01:24Z"}
+{"host":"web-03","latency_ms":28,"level":"error","msg":"slow query","time":"2026-03-01T12:01:38Z"}
+{"host":"web-01","latency_ms":102,"level":"info","msg":"ok","time":"2026-03-01T12:01:52Z"}
+{"host":"web-03","latency_ms":176,"level":"info","msg":"slow query","time":"2026-03-01T12:02:06Z"}
+{"host":"web-01","latency_ms":250,"level":"error","msg":"ok","time":"2026-03-01T12:02:20Z"}
+{"host":"web-03","latency_ms":324,"level":"info","msg":"slow query","time":"2026-03-01T12:02:34Z"}
+{"host":"web-01","latency_ms":398,"level":"info","msg":"ok","time":"2026-03-01T12:02:48Z"}
+{"host":"web-03","latency_ms":472,"level":"error","msg":"slow query","time":"2026-03-01T12:03:02Z"}
+{"host":"web-01","latency_ms":46,"level":"info","msg":"ok","time":"2026-03-01T12:03:16Z"}
+{"host":"web-03","latency_ms":120,"level":"info","msg":"slow query","time":"2026-03-01T12:03:30Z"}
+{"host":"web-01","latency_ms":194,"level":"error","msg":"ok","time":"2026-03-01T12:03:44Z"}
+{"host":"web-03","latency_ms":268,"level":"info","msg":"slow query","time":"2026-03-01T12:03:58Z"}
+{"host":"web-01","latency_ms":342,"level":"info","msg":"ok","time":"2026-03-01T12:04:12Z"}
+{"host":"web-03","latency_ms":416,"level":"error","msg":"slow query","time":"2026-03-01T12:04:26Z"}
+--- stderr
+{"line":6,"stage":"parse","error":"campo \"time\" ausente","raw":"{\"level\":\"error\",\"host\":\"web-01\",\"msg\":\"sem time\"}"}
+{"line":13,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
+{"line":21,"stage":"parse","error":"campo \"time\" inválido: \"ontem\"","raw":"{\"time\":\"ontem\",\"level\":\"info\"}"}

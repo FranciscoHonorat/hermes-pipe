@@ -1,0 +1,3 @@
+stages:
+  - type: limit
+    n: 1

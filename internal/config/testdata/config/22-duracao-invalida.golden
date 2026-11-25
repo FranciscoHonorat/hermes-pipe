@@ -1,0 +1,1 @@
+erro: 22-duracao-invalida.yaml:5:1: cannot unmarshal !!str `amanha` into time.Duration

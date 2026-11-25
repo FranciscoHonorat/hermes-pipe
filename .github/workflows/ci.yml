@@ -45,6 +45,32 @@ jobs:
       - name: Test
         run: go test -race -v ./...
 
+  arch:
+    name: Arquitetura (hermes-pipe-lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: hermes-pipe-lint
+        run: go run ./cmd/hermes-pipe-lint ./internal/stage/...
+
+  cover:
+    name: Cobertura (>= 80% em internal/)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Cobertura
+        run: make cover-check
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

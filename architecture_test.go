@@ -24,8 +24,11 @@ var allowed = map[string][]string{
 	"cmd":      {"config", "pipeline", "stage", "event"},
 	"config":   {"pipeline", "stage", "event"},
 	"pipeline": {"event"},
-	"stage":    {"stage", "event"},
+	"stage":    {"stage", "event", "ds"},
+	"ds":       {},
 	"event":    {},
+	"lintcmd":  {"lint"},
+	"lint":     {},
 	"root":     {},
 }
 
@@ -44,6 +47,12 @@ func layerOf(path string) (string, bool) {
 	switch {
 	case rel == "cmd/hermes-pipe":
 		return "cmd", true
+	case rel == "cmd/hermes-pipe-lint":
+		return "lintcmd", true
+	case rel == "internal/lint":
+		return "lint", true
+	case rel == "internal/ds":
+		return "ds", true
 	case rel == "internal/config":
 		return "config", true
 	case rel == "internal/pipeline":
@@ -152,6 +161,9 @@ func TestArchitecture_DetectsViolations(t *testing.T) {
 		{"stage importa irmão", []pkg{{ImportPath: filter, Imports: []string{mapper}}}, "stages não importam uns aos outros"},
 		{"lib externa em event", []pkg{{ImportPath: event, Imports: []string{"github.com/x/y"}}}, "dependência externa proibida"},
 		{"pacote sem camada", []pkg{{ImportPath: module + "/internal/novo"}}, "fora de qualquer camada"},
+		{"ds importa event", []pkg{{ImportPath: module + "/internal/ds", Imports: []string{event}}}, `"ds" não pode importar "event"`},
+		{"pipeline importa ds", []pkg{{ImportPath: pipeline, Imports: []string{module + "/internal/ds"}}}, `"pipeline" não pode importar "ds"`},
+		{"lint importa stage", []pkg{{ImportPath: module + "/internal/lint", Imports: []string{stage}}}, `"lint" não pode importar "stage"`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

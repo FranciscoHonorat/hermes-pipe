@@ -1,0 +1,10 @@
+# Quantos erros/avisos por host a cada minuto, tolerando 30s de atraso.
+version: 1
+stages:
+  - type: filter
+    where: ["level != info"]
+  - type: window
+    size: 1m
+    lateness: 30s
+    by: [host]
+    metrics: [count, "max:latency_ms"]

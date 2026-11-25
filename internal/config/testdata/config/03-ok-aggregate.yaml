@@ -1,0 +1,7 @@
+version: 1
+stages:
+  - type: aggregate
+    by: [host]
+    metrics: [count]
+    top: 10
+    max_keys: 1000

@@ -1,0 +1,37 @@
+uso:
+  hermes-pipe [flags] < entrada.jsonl > ok.jsonl 2> erros.jsonl
+  hermes-pipe run -c pipeline.yaml [flags]
+  hermes-pipe schema
+  hermes-pipe version
+
+Cada linha da entrada precisa ser um objeto JSON com "time" em RFC 3339.
+Linhas válidas vão para o stdout; rejeitadas vão para o stderr, em JSON,
+seguidas de uma linha {"summary":{...}}.
+
+Códigos de saída: 0 ok, 1 houve eventos rejeitados, 2 uso ou config
+inválida, 3 erro fatal, 130 interrompido.
+
+Ctrl+C uma vez: para de ler, drena e imprime o resumo. Duas vezes: para já.
+
+flags:
+  -buffer int
+    	capacidade dos channels entre stages (default 64)
+  -filter value
+    	expressão campo OP valor (repetível, E lógico)
+  -idle-flush duration
+    	fecha janelas após esse tempo sem eventos (0 = desligado)
+  -limit int
+    	para depois de N eventos emitidos (0 = sem limite)
+  -map value
+    	rename:a=b, copy:a=b, set:a=v ou delete:a (repetível)
+  -max-line int
+    	tamanho máximo de linha em bytes (0 = 1 MiB)
+  -quiet
+    	não imprime o resumo no stderr
+  -stats
+    	inclui tempo, throughput e configuração no resumo
+  -v	logs operacionais a partir de INFO
+  -version
+    	imprime a versão
+  -workers int
+    	goroutines por stage sem estado (filter, map) (default 1)

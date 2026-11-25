@@ -1,0 +1,4 @@
+version: 1
+stagse:
+  - type: limit
+    n: 1

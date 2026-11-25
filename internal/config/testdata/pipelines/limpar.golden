@@ -1,0 +1,7 @@
+--- stdout
+{"host":"web-01","latency_ms":10,"level":"info","message":"ok","time":"2026-03-01T12:00:00Z"}
+{"host":"db-01","latency_ms":47,"level":"info","message":"upstream timeout","time":"2026-03-01T12:00:07Z"}
+{"host":"web-03","latency_ms":84,"level":"error","message":"slow query","time":"2026-03-01T12:00:14Z"}
+{"host":"web-02","latency_ms":121,"level":"warn","message":"retrying","time":"2026-03-01T12:00:21Z"}
+{"host":"web-01","latency_ms":158,"level":"info","message":"ok","time":"2026-03-01T12:00:28Z"}
+--- stderr

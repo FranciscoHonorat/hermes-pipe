@@ -1,6 +1,6 @@
 # hermes-pipe: roadmap de 14 semanas
 
-**Um processador de stream local em Go 1.27. Escopo pequeno, profundidade máxima.**
+**Um processador de stream local em Go 1.27.2 Escopo pequeno, profundidade máxima.**
 
 O pipeline é a desculpa; o objetivo é **entender Go por baixo**: runtime, scheduler, channels, alocador, GC, maps, interfaces, generics. O gate de cada semana não é "funciona", é "sei explicar o que aconteceu na memória, no scheduler e no heap".
 

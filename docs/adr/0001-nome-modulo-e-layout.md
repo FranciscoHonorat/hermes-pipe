@@ -63,8 +63,15 @@ cmd/hermes-pipe  →  internal/config  →  internal/pipeline, internal/stage/* 
 | `cmd`       | `cmd/hermes-pipe`                          | config, pipeline, stage, event    |
 | `config`    | `internal/config`                          | pipeline, stage, event            |
 | `pipeline`  | `internal/pipeline`                        | event                             |
-| `stage`     | `internal/stage`, `internal/stage/*`       | event, `internal/stage` (pai)     |
+| `stage`     | `internal/stage`, `internal/stage/*`       | event, ds, `internal/stage` (pai) |
+| `ds`        | `internal/ds`                              | nada do módulo                    |
 | `event`     | `internal/event`                           | nada do módulo                    |
+| `lintcmd`   | `cmd/hermes-pipe-lint`                     | lint                              |
+| `lint`      | `internal/lint`                            | nada do módulo                    |
+
+`ds` (estruturas genéricas com teto, semana 10, ADR 0011) e `lint` (o
+analisador, semana 6, ADR 0008) foram adicionadas depois desta decisão. O
+analisador é uma ferramenta separada: nada do pipeline o importa.
 
 Regras:
 

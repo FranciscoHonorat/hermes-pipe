@@ -1,0 +1,23 @@
+exit: 1
+--- stdout
+{"count":1,"host":"db-01","max_latency_ms":195,"time":"2026-03-01T12:00:00Z","window_end":"2026-03-01T12:01:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"count":1,"host":"web-01","max_latency_ms":306,"time":"2026-03-01T12:00:00Z","window_end":"2026-03-01T12:01:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"count":1,"host":"web-02","max_latency_ms":121,"time":"2026-03-01T12:00:00Z","window_end":"2026-03-01T12:01:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"count":1,"host":"web-03","max_latency_ms":84,"time":"2026-03-01T12:00:00Z","window_end":"2026-03-01T12:01:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"count":2,"host":"db-01","max_latency_ms":343,"time":"2026-03-01T12:01:00Z","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:01:00Z"}
+{"count":2,"host":"web-02","max_latency_ms":417,"time":"2026-03-01T12:01:00Z","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:01:00Z"}
+{"count":1,"host":"web-03","max_latency_ms":28,"time":"2026-03-01T12:01:00Z","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:01:00Z"}
+{"count":1,"host":"db-01","max_latency_ms":287,"time":"2026-03-01T12:02:00Z","window_end":"2026-03-01T12:03:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"count":1,"host":"web-01","max_latency_ms":250,"time":"2026-03-01T12:02:00Z","window_end":"2026-03-01T12:03:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"count":1,"host":"web-02","max_latency_ms":361,"time":"2026-03-01T12:02:00Z","window_end":"2026-03-01T12:03:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"count":2,"host":"db-01","max_latency_ms":231,"time":"2026-03-01T12:03:00Z","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:03:00Z"}
+{"count":1,"host":"web-01","max_latency_ms":194,"time":"2026-03-01T12:03:00Z","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:03:00Z"}
+{"count":1,"host":"web-02","max_latency_ms":509,"time":"2026-03-01T12:03:00Z","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:03:00Z"}
+{"count":1,"host":"web-03","max_latency_ms":472,"time":"2026-03-01T12:03:00Z","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:03:00Z"}
+{"count":2,"host":"web-02","max_latency_ms":453,"time":"2026-03-01T12:04:00Z","window_end":"2026-03-01T12:05:00Z","window_start":"2026-03-01T12:04:00Z"}
+{"count":1,"host":"web-03","max_latency_ms":416,"time":"2026-03-01T12:04:00Z","window_end":"2026-03-01T12:05:00Z","window_start":"2026-03-01T12:04:00Z"}
+--- stderr
+{"line":6,"stage":"parse","error":"campo \"time\" ausente","raw":"{\"level\":\"error\",\"host\":\"web-01\",\"msg\":\"sem time\"}"}
+{"line":13,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
+{"line":21,"stage":"parse","error":"campo \"time\" inválido: \"ontem\"","raw":"{\"time\":\"ontem\",\"level\":\"info\"}"}
+{"summary":{"read":43,"emitted":16,"dropped":36,"errored":3,"generated":12}}

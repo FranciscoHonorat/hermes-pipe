@@ -1,0 +1,6 @@
+version: 1
+stages:
+  - type: filter
+    where: ["msg =~ ^(ok|slow)", "host != db-01"]
+  - type: map
+    ops: ["delete:req_id"]

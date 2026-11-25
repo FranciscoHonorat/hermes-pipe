@@ -1,0 +1,1 @@
+erro: 26-metrica-invalida.yaml:3:5: aggregate: métrica "median:x": tipo desconhecido (use count, sum, min, max, avg ou pNN)

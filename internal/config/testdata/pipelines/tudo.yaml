@@ -1,0 +1,14 @@
+version: 1
+stages:
+  - type: filter
+    where: ["latency_ms >= 20"]
+  - type: map
+    ops: ["rename:msg=message", "set:env=prod", "copy:host=origin"]
+  - type: dedup
+    by: [req_id]
+    window: 1m
+  - type: window
+    size: 2m
+    lateness: 15s
+    by: [level]
+    metrics: [count, "sum:latency_ms", "avg:latency_ms", "p50:latency_ms"]

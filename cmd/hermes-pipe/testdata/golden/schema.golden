@@ -1,0 +1,29 @@
+version: int
+input: string
+buffer: int
+workers: int
+idle_flush: time.Duration
+max_line: int
+stages: []stage
+stage aggregate:
+  by: []string
+  metrics: []string
+  top: int
+  max_keys: int
+stage dedup:
+  by: []string
+  window: time.Duration
+  max_keys: int
+stage filter:
+  where: []string
+stage limit:
+  n: int64
+stage map:
+  ops: []string
+stage window:
+  size: time.Duration
+  lateness: time.Duration
+  by: []string
+  metrics: []string
+  max_open: int
+  max_keys: int

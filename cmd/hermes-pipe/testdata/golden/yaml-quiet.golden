@@ -1,0 +1,9 @@
+exit: 1
+--- stdout
+{"count":4,"host":"web-03","p95_latency_ms":472,"time":"2026-03-01T12:04:26Z"}
+{"count":3,"host":"db-01","p95_latency_ms":195,"time":"2026-03-01T12:03:23Z"}
+{"count":3,"host":"web-01","p95_latency_ms":306,"time":"2026-03-01T12:03:44Z"}
+--- stderr
+{"line":6,"stage":"parse","error":"campo \"time\" ausente","raw":"{\"level\":\"error\",\"host\":\"web-01\",\"msg\":\"sem time\"}"}
+{"line":13,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
+{"line":21,"stage":"parse","error":"campo \"time\" inválido: \"ontem\"","raw":"{\"time\":\"ontem\",\"level\":\"info\"}"}
