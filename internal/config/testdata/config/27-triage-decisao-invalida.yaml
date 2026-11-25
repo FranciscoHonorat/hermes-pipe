@@ -1,0 +1,8 @@
+version: 1
+stages:
+  - type: triage
+    rules:
+      - name: r
+        where: ["level == error"]
+        decision: talvez
+        reason: "x"

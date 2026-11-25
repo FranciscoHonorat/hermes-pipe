@@ -1,0 +1,12 @@
+--- stdout
+{"count":4,"p95_latency_ms":195,"time":"2026-03-01T12:00:00Z","triage.decision":"quarantine","triage.rule":"erro","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"count":2,"p95_latency_ms":417,"time":"2026-03-01T12:00:00Z","triage.decision":"human_review","triage.rule":"erro_lento","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"count":2,"p95_latency_ms":343,"time":"2026-03-01T12:00:00Z","triage.decision":"human_review","triage.rule":"timeout","window_end":"2026-03-01T12:02:00Z","window_start":"2026-03-01T12:00:00Z"}
+{"count":2,"p95_latency_ms":194,"time":"2026-03-01T12:02:00Z","triage.decision":"quarantine","triage.rule":"erro","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"count":3,"p95_latency_ms":472,"time":"2026-03-01T12:02:00Z","triage.decision":"human_review","triage.rule":"erro_lento","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"count":2,"p95_latency_ms":287,"time":"2026-03-01T12:02:00Z","triage.decision":"human_review","triage.rule":"timeout","window_end":"2026-03-01T12:04:00Z","window_start":"2026-03-01T12:02:00Z"}
+{"count":2,"p95_latency_ms":416,"time":"2026-03-01T12:04:00Z","triage.decision":"human_review","triage.rule":"erro_lento","window_end":"2026-03-01T12:06:00Z","window_start":"2026-03-01T12:04:00Z"}
+--- stderr
+{"line":6,"stage":"parse","error":"campo \"time\" ausente","raw":"{\"level\":\"error\",\"host\":\"web-01\",\"msg\":\"sem time\"}"}
+{"line":13,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
+{"line":21,"stage":"parse","error":"campo \"time\" inválido: \"ontem\"","raw":"{\"time\":\"ontem\",\"level\":\"info\"}"}

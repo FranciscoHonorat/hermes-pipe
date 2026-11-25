@@ -27,6 +27,8 @@ import (
 	"github.com/FranciscoHonorat/hermes-pipe/internal/stage/filter"
 	"github.com/FranciscoHonorat/hermes-pipe/internal/stage/limit"
 	"github.com/FranciscoHonorat/hermes-pipe/internal/stage/mapper"
+	"github.com/FranciscoHonorat/hermes-pipe/internal/stage/reconcile"
+	"github.com/FranciscoHonorat/hermes-pipe/internal/stage/triage"
 	"github.com/FranciscoHonorat/hermes-pipe/internal/stage/window"
 )
 
@@ -188,6 +190,8 @@ var registry = map[string]registration{
 	"aggregate": register(aggregate.New),
 	"window":    register(window.New),
 	"dedup":     register(dedup.New),
+	"triage":    register(triage.New),
+	"reconcile": register(reconcile.New),
 }
 
 // schemaTypes liga cada stage ao tipo da Config dele, para Schema.
@@ -198,23 +202,38 @@ var schemaTypes = map[string]reflect.Type{
 	"aggregate": reflect.TypeFor[aggregate.Config](),
 	"window":    reflect.TypeFor[window.Config](),
 	"dedup":     reflect.TypeFor[dedup.Config](),
+	"triage":    reflect.TypeFor[triage.Config](),
+	"reconcile": reflect.TypeFor[reconcile.Config](),
 }
 
 // Schema descreve o schema YAML aceito: é parte da API pública (a CLI e o
 // YAML), e TestCLI_Stable trava a forma dele num golden.
 func Schema() string {
 	var b strings.Builder
-	describe := func(indent string, t reflect.Type) {
+	var describe func(indent string, t reflect.Type)
+	describe = func(indent string, t reflect.Type) {
 		for f := range t.Fields() {
 			name, _, _ := strings.Cut(f.Tag.Get("yaml"), ",")
 			if name == "" || name == "-" {
 				continue
 			}
-			typ := f.Type.String()
-			if f.Type == reflect.TypeFor[[]yaml.Node]() {
-				typ = "[]stage"
+			ft := f.Type
+			if ft.Kind() == reflect.Pointer {
+				ft = ft.Elem()
 			}
-			fmt.Fprintf(&b, "%s%s: %s\n", indent, name, strings.TrimPrefix(typ, "*"))
+			typ := ft.String()
+			switch {
+			case ft == reflect.TypeFor[[]yaml.Node]():
+				typ = "[]stage"
+			case ft.Kind() == reflect.String:
+				typ = "string" // tipos nomeados (triage.Decision) aparecem pelo que o YAML aceita
+			case ft.Kind() == reflect.Slice && ft.Elem().Kind() == reflect.Struct:
+				fmt.Fprintf(&b, "%s%s: []\n", indent, name)
+				describe(indent+"  - ", ft.Elem())
+				continue
+			}
+			fmt.Fprintf(&b, "%s%s: %s\n", indent, name, typ)
+			indent = strings.ReplaceAll(indent, "- ", "  ") // só o primeiro campo do item leva "- "
 		}
 	}
 	describe("", reflect.TypeFor[file]())
@@ -249,7 +268,26 @@ func valueNode(m *yaml.Node, key string, def *yaml.Node) *yaml.Node {
 // depois decodifica. yaml.Node.Decode não tem KnownFields, por isso a
 // verificação é feita aqui, comparando com as tags do struct.
 func decodeStrict(n *yaml.Node, v any, skip []string, errAt errAtFunc) error {
-	known := yamlFields(reflect.TypeOf(v).Elem())
+	if err := checkKeys(n, reflect.TypeOf(v).Elem(), skip, errAt); err != nil {
+		return err
+	}
+	// Decodifica uma cópia sem as chaves puladas.
+	cp := *n
+	cp.Content = nil
+	for i := 0; i+1 < len(n.Content); i += 2 {
+		if !slices.Contains(skip, n.Content[i].Value) {
+			cp.Content = append(cp.Content, n.Content[i], n.Content[i+1])
+		}
+	}
+	return decodeCopy(n, &cp, v, errAt)
+}
+
+// checkKeys recusa chaves desconhecidas ou repetidas num mapa do tipo t.
+func checkKeys(n *yaml.Node, t reflect.Type, skip []string, errAt errAtFunc) error {
+	if n.Kind != yaml.MappingNode {
+		return nil // o Decode dá o erro de tipo com posição
+	}
+	known := yamlFields(t)
 	seen := map[string]bool{}
 	for i := 0; i+1 < len(n.Content); i += 2 {
 		k := n.Content[i]
@@ -263,15 +301,49 @@ func decodeStrict(n *yaml.Node, v any, skip []string, errAt errAtFunc) error {
 		if !slices.Contains(known, k.Value) {
 			return errAt(k, "campo desconhecido %q (campos: %s)", k.Value, strings.Join(known, ", "))
 		}
-	}
-	// Decodifica uma cópia sem as chaves puladas.
-	cp := *n
-	cp.Content = nil
-	for i := 0; i+1 < len(n.Content); i += 2 {
-		if !slices.Contains(skip, n.Content[i].Value) {
-			cp.Content = append(cp.Content, n.Content[i], n.Content[i+1])
+		if err := checkNested(n.Content[i+1], fieldType(t, k.Value), errAt); err != nil {
+			return err
 		}
 	}
+	return nil
+}
+
+// checkNested desce em campos que são struct ou lista de structs (as regras
+// do triage), para que um erro de digitação lá dentro também seja recusado.
+func checkNested(n *yaml.Node, t reflect.Type, errAt errAtFunc) error {
+	if t == nil {
+		return nil
+	}
+	if t.Kind() == reflect.Pointer {
+		t = t.Elem()
+	}
+	if t == reflect.TypeFor[yaml.Node]() || t == reflect.TypeFor[[]yaml.Node]() {
+		return nil // stages: cada um é validado pelo próprio registro
+	}
+	switch {
+	case t.Kind() == reflect.Struct && n.Kind == yaml.MappingNode && t != reflect.TypeFor[time.Duration]():
+		return checkKeys(n, t, nil, errAt)
+	case t.Kind() == reflect.Slice && n.Kind == yaml.SequenceNode:
+		for _, item := range n.Content {
+			if err := checkNested(item, t.Elem(), errAt); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func fieldType(t reflect.Type, yamlName string) reflect.Type {
+	for f := range t.Fields() {
+		if name, _, _ := strings.Cut(f.Tag.Get("yaml"), ","); name == yamlName {
+			return f.Type
+		}
+	}
+	return nil
+}
+
+// decodeCopy decodifica cp em v; os erros de tipo saem com a posição de n.
+func decodeCopy(n, cp *yaml.Node, v any, errAt errAtFunc) error {
 	if err := cp.Decode(v); err != nil {
 		var te *yaml.TypeError
 		if errors.As(err, &te) && len(te.Errors) > 0 {

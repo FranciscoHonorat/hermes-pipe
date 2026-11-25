@@ -1,0 +1,10 @@
+{"time":"2026-03-01T08:00:00Z","reading_id":"r1","host":"cel-01","energy_wh":150,"units_ok":1}
+{"time":"2026-03-01T08:00:05Z","reading_id":"r2","host":"cel-02","energy_wh":90,"units_ok":3}
+{"time":"2026-03-01T08:00:20Z","reading_id":"r3","host":"cobo-01","level":"error","latency_ms":310,"energy_wh":60,"units_ok":2}
+{"time":"2026-03-01T08:00:40Z","kind":"human_decision","decision_id":"d-100","target_key":"r1","operator_id":"op-ana","action":"approve","reason":"célula recalibrada; lote liberado"}
+{"time":"2026-03-01T08:00:41Z","kind":"human_decision","decision_id":"d-100","target_key":"r1","operator_id":"op-ana","action":"approve","reason":"célula recalibrada; lote liberado"}
+{"time":"2026-03-01T08:00:50Z","kind":"human_decision","decision_id":"d-101","target_key":"r1","operator_id":"op-bia","action":"reject","reason":"segundo clique no painel"}
+{"time":"2026-03-01T08:00:55Z","kind":"human_decision","decision_id":"d-999","target_key":"r3","operator_id":"op-bia","action":"override"}
+{"time":"2026-03-01T08:01:30Z","reading_id":"r4","host":"cel-02","energy_wh":88,"units_ok":3}
+{"time":"2026-03-01T08:01:35Z","kind":"human_decision","decision_id":"d-102","target_key":"r3","operator_id":"op-ana","action":"override","reason":"reduzir ritmo do cobot"}
+{"time":"2026-03-01T08:01:50Z","reading_id":"r5","host":"cel-01","energy_wh":170,"units_ok":0}

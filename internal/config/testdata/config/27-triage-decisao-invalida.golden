@@ -1,0 +1,1 @@
+erro: 27-triage-decisao-invalida.yaml:3:5: triage: regra "r": decision "talvez" inválido (use auto_ok, human_review ou quarantine)

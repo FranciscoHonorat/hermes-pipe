@@ -1,0 +1,12 @@
+exit: 1
+--- stdout
+{"energy_wh":90,"host":"cel-02","reading_id":"r2","time":"2026-03-01T08:00:05Z","triage":{"decision":"auto_ok","reason":null,"requires_ack":false,"rule":null},"units_ok":3}
+{"energy_wh":150,"host":"cel-01","reading_id":"r1","reconcile":{"action":"approve","decided_at":"2026-03-01T08:00:40Z","decision_id":"d-100","operator_id":"op-ana","reason":"célula recalibrada; lote liberado","status":"resolved"},"time":"2026-03-01T08:00:00Z","triage":{"decision":"quarantine","reason":"Consumo energético alto para baixa entrega útil","requires_ack":true,"rule":"energia_anomala_por_peca"},"units_ok":1}
+{"action":"reject","decision_id":"d-101","kind":"human_decision","operator_id":"op-bia","reason":"segundo clique no painel","reconcile":{"status":"orphan_decision"},"target_key":"r1","time":"2026-03-01T08:00:50Z","triage":{"decision":"auto_ok","reason":null,"requires_ack":false,"rule":null}}
+{"energy_wh":60,"host":"cobo-01","latency_ms":310,"level":"error","reading_id":"r3","reconcile":{"deadline":"2026-03-01T08:01:20Z","status":"escalated_timeout"},"time":"2026-03-01T08:00:20Z","triage":{"decision":"human_review","reason":"Latência crítica em operação colaborativa","requires_ack":true,"rule":"degradacao_latencia_cobo"},"units_ok":2}
+{"energy_wh":88,"host":"cel-02","reading_id":"r4","time":"2026-03-01T08:01:30Z","triage":{"decision":"auto_ok","reason":null,"requires_ack":false,"rule":null},"units_ok":3}
+{"action":"override","decision_id":"d-102","kind":"human_decision","operator_id":"op-ana","reason":"reduzir ritmo do cobot","reconcile":{"status":"orphan_decision"},"target_key":"r3","time":"2026-03-01T08:01:35Z","triage":{"decision":"auto_ok","reason":null,"requires_ack":false,"rule":null}}
+{"energy_wh":170,"host":"cel-01","reading_id":"r5","reconcile":{"deadline":"2026-03-01T08:02:50Z","status":"unresolved"},"time":"2026-03-01T08:01:50Z","triage":{"decision":"quarantine","reason":"Consumo energético alto para baixa entrega útil","requires_ack":true,"rule":"energia_anomala_por_peca"},"units_ok":0}
+--- stderr
+{"line":7,"stage":"reconcile(by reading_id within 1m0s)","error":"human_decision inválida: \"reason\" precisa ser texto não vazio","event":{"action":"override","decision_id":"d-999","kind":"human_decision","operator_id":"op-bia","target_key":"r3","time":"2026-03-01T08:00:55Z","triage":{"decision":"auto_ok","reason":null,"requires_ack":false,"rule":null}}}
+{"summary":{"read":10,"emitted":7,"dropped":4,"errored":1,"generated":2}}

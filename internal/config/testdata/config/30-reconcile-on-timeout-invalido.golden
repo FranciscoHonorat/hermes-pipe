@@ -1,0 +1,1 @@
+erro: 30-reconcile-on-timeout-invalido.yaml:3:5: reconcile: on_timeout "esperar" inválido (use escalate, quarantine ou drop)

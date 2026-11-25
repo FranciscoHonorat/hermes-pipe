@@ -1,0 +1,10 @@
+exit: 1
+--- stdout
+{"count":2,"host":"cel-01","p95_latency_ms":75,"ratio_energy_wh_units_ok":155,"sum_energy_wh":310,"sum_scrap_units":3,"time":"2026-03-01T08:00:00Z","triage.decision":"quarantine","triage.rule":"energia_anomala_por_peca","window_end":"2026-03-01T08:01:00Z","window_start":"2026-03-01T08:00:00Z"}
+{"count":2,"host":"cobo-01","p95_latency_ms":330,"ratio_energy_wh_units_ok":40.666666666666664,"sum_energy_wh":122,"sum_scrap_units":1,"time":"2026-03-01T08:00:00Z","triage.decision":"human_review","triage.rule":"degradacao_latencia_cobo","window_end":"2026-03-01T08:01:00Z","window_start":"2026-03-01T08:00:00Z"}
+{"count":1,"host":"cel-01","p95_latency_ms":68,"ratio_energy_wh_units_ok":140,"sum_energy_wh":140,"sum_scrap_units":1,"time":"2026-03-01T08:01:00Z","triage.decision":"quarantine","triage.rule":"energia_anomala_por_peca","window_end":"2026-03-01T08:02:00Z","window_start":"2026-03-01T08:01:00Z"}
+{"count":2,"host":"cel-02","p95_latency_ms":64,"ratio_energy_wh_units_ok":null,"ratio_energy_wh_units_ok_status":"undefined_denominator","sum_energy_wh":370,"sum_scrap_units":5,"time":"2026-03-01T08:01:00Z","triage.decision":"quarantine","triage.rule":"energia_anomala_por_peca","window_end":"2026-03-01T08:02:00Z","window_start":"2026-03-01T08:01:00Z"}
+{"count":1,"host":"cobo-01","p95_latency_ms":400,"ratio_energy_wh_units_ok":130,"sum_energy_wh":130,"sum_scrap_units":1,"time":"2026-03-01T08:02:00Z","triage.decision":"quarantine","triage.rule":"energia_anomala_por_peca","window_end":"2026-03-01T08:03:00Z","window_start":"2026-03-01T08:02:00Z"}
+--- stderr
+{"line":18,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
+{"summary":{"read":21,"emitted":5,"dropped":18,"errored":1,"generated":3}}

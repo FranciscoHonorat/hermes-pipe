@@ -1,0 +1,1 @@
+erro: 28-triage-campo-regra-desconhecido.yaml:9:9: campo desconhecido "prioridade" (campos: name, where, decision, reason, requires_ack)

@@ -107,6 +107,47 @@ Outros exemplos:
 em janelas de 1 minuto) e [`limpar.yaml`](examples/limpar.yaml) (remove
 retries duplicados, renomeia e corta).
 
+### Triagem para revisão humana
+
+Classifica cada leitura de célula por regras ordenadas (a primeira que casa
+vence), fica só com o que precisa de gente, colapsa rajadas do mesmo incidente
+em 30s e resume por minuto com energia por peça boa
+([`examples/industria5-supervisao.yaml`](examples/industria5-supervisao.yaml),
+ADR 0015):
+
+```sh
+hermes-pipe run -c examples/industria5-supervisao.yaml < examples/industria5.jsonl
+```
+
+```json
+{"count":2,"host":"cel-01","p95_latency_ms":75,"ratio_energy_wh_units_ok":155,"sum_energy_wh":310,"sum_scrap_units":3,"time":"2026-03-01T08:00:00Z","triage.decision":"quarantine","triage.rule":"energia_anomala_por_peca","window_end":"2026-03-01T08:01:00Z","window_start":"2026-03-01T08:00:00Z"}
+{"count":2,"host":"cel-02","p95_latency_ms":64,"ratio_energy_wh_units_ok":null,"ratio_energy_wh_units_ok_status":"undefined_denominator","sum_energy_wh":370,"sum_scrap_units":5,"time":"2026-03-01T08:01:00Z","triage.decision":"quarantine","triage.rule":"energia_anomala_por_peca","window_end":"2026-03-01T08:02:00Z","window_start":"2026-03-01T08:01:00Z"}
+```
+
+O `triage` não descarta nem segura nada: todo evento sai com
+`"triage": {"decision", "rule", "reason", "requires_ack"}`, e o `filter`
+seguinte decide o que segue.
+
+### Reconciliar a decisão do operador
+
+A decisão humana volta como evento (`kind: "human_decision"`, com
+`decision_id`, `target_key`, `operator_id`, `action`, `reason`). O
+`reconcile` segura cada exceção até a decisão chegar ou o prazo vencer, no
+tempo do evento. Um `decision_id` repetido não tem efeito, e um segundo clique
+sai como `orphan_decision`
+([`examples/reconciliacao.yaml`](examples/reconciliacao.yaml), ADR 0016):
+
+```sh
+hermes-pipe run -c examples/reconciliacao.yaml < examples/reconciliacao.jsonl
+```
+
+Cada exceção sai uma vez, com o desfecho:
+
+```json
+{"energy_wh":150,"host":"cel-01","reading_id":"r1","reconcile":{"action":"approve","decided_at":"2026-03-01T08:00:40Z","decision_id":"d-100","operator_id":"op-ana","reason":"célula recalibrada; lote liberado","status":"resolved"},"time":"2026-03-01T08:00:00Z","triage":{...},"units_ok":1}
+{"energy_wh":60,"host":"cobo-01","latency_ms":310,"level":"error","reading_id":"r3","reconcile":{"deadline":"2026-03-01T08:01:20Z","status":"escalated_timeout"},"time":"2026-03-01T08:00:20Z","triage":{...},"units_ok":2}
+```
+
 Uma config errada falha **antes do primeiro evento**, com linha e coluna:
 
 ```
@@ -123,9 +164,14 @@ hermes-pipe: pipeline.yaml:4:5: campo desconhecido "wher" (campos: where)
 | `aggregate` | agrupa por chave e emite no fim | `by`, `metrics`, `top`, `max_keys` |
 | `window` | agrega por chave em janelas `[início, fim)` do tempo do evento | `size`, `lateness`, `by`, `metrics`, `max_open`, `max_keys` |
 | `dedup` | remove repetidos dentro de uma janela de tempo | `by`, `window`, `max_keys` |
+| `reconcile` | casa exceções com a decisão humana por chave, com prazo e idempotência por `decision_id`; status `resolved`, `escalated_timeout`, `quarantined_timeout`, `evicted`, `unresolved`, `orphan_decision`, ... | `correlate_by`, `window`, `max_keys`, `max_decisions`, `on_timeout`, `on_duplicate` |
+| `triage` | anota `triage.decision` (`auto_ok`, `human_review`, `quarantine`), `rule`, `reason` e `requires_ack` pela primeira regra que casa | `default_decision`, `rules: [{name, where, decision, reason, requires_ack}]` |
 
 Métricas: `count`, `sum:campo`, `min:campo`, `max:campo`, `avg:campo`,
-`pNN:campo` (percentil; aproximado acima de 512 valores por chave).
+`pNN:campo` (percentil; aproximado acima de 512 valores por chave) e
+`ratio:num:den` (soma de `num` ÷ soma de `den`, só com eventos que têm os
+dois; denominador zero sai `null` com `"<métrica>_status":
+"undefined_denominator"`, nunca `NaN`/`Inf`).
 
 Todo stage com estado tem **memória limitada**: `max_keys` e `max_open`. Um
 grupo despejado pelo teto é emitido na hora com `"evicted": true`, nunca
@@ -242,3 +288,5 @@ cobertura mínima e, nos PRs, `benchstat` contra a base.
 | [0012](docs/adr/0012-workers-e-backpressure.md) | workers e backpressure |
 | [0013](docs/adr/0013-determinismo-e-testes-adversariais.md) | determinismo e testes adversariais |
 | [0014](docs/adr/0014-build-e-release.md) | build reproduzível e release |
+| [0015](docs/adr/0015-triagem-excecoes-e-metricas-impacto.md) | `triage`, métrica `ratio` e config estrita aninhada |
+| [0016](docs/adr/0016-reconciliacao-idempotente-decisoes-humanas.md) | `reconcile`: decisões humanas idempotentes |

@@ -1,0 +1,28 @@
+# triage -> filter -> dedup -> window sobre examples/logs.jsonl (ADR 0015).
+version: 1
+stages:
+  - type: triage
+    rules:
+      - name: erro_lento
+        where: ["level == error", "latency_ms >= 250"]
+        decision: human_review
+        reason: "erro com latência alta"
+        requires_ack: true
+      - name: erro
+        where: ["level == error"]
+        decision: quarantine
+        reason: "erro"
+      - name: timeout
+        where: ["msg =~ timeout"]
+        decision: human_review
+        reason: "timeout upstream"
+  - type: filter
+    where: ["triage.decision != auto_ok"]
+  - type: dedup
+    by: [host, triage.rule]
+    window: 30s
+  - type: window
+    size: 2m
+    lateness: 15s
+    by: [triage.rule, triage.decision]
+    metrics: [count, "p95:latency_ms"]

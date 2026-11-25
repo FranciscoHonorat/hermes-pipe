@@ -1,0 +1,6 @@
+version: 1
+stages:
+  - type: reconcile
+    correlate_by: incident_id
+    window: 1m
+    on_timeout: esperar

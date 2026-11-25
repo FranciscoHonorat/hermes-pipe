@@ -20,6 +20,21 @@ stage limit:
   n: int64
 stage map:
   ops: []string
+stage reconcile:
+  correlate_by: string
+  window: time.Duration
+  max_keys: int
+  max_decisions: int
+  on_timeout: string
+  on_duplicate: string
+stage triage:
+  default_decision: string
+  rules: []
+    - name: string
+      where: []string
+      decision: string
+      reason: string
+      requires_ack: bool
 stage window:
   size: time.Duration
   lateness: time.Duration

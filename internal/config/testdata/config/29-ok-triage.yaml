@@ -1,0 +1,12 @@
+version: 1
+stages:
+  - type: triage
+    default_decision: human_review
+    rules:
+      - name: libera_info
+        where: ["level == info"]
+        decision: auto_ok
+        reason: "informativo"
+  - type: aggregate
+    by: [triage.decision]
+    metrics: [count, "ratio:latency_ms:n"]

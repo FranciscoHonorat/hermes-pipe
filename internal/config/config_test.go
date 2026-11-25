@@ -125,7 +125,7 @@ stages:
 }
 
 func TestTypes(t *testing.T) {
-	if got := strings.Join(Types(), ","); got != "aggregate,dedup,filter,limit,map,window" {
+	if got := strings.Join(Types(), ","); got != "aggregate,dedup,filter,limit,map,reconcile,triage,window" {
 		t.Fatal(got)
 	}
 }

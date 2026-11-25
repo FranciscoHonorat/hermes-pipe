@@ -1,0 +1,15 @@
+# triage -> reconcile sobre examples/logs.jsonl: sem decisões humanas, cada
+# erro fica pendente e sai por prazo, teto (max_keys: 2) ou no Flush (ADR 0016).
+version: 1
+stages:
+  - type: triage
+    rules:
+      - name: erro
+        where: ["level == error"]
+        decision: human_review
+        reason: "erro"
+        requires_ack: true
+  - type: reconcile
+    correlate_by: req_id
+    window: 2m
+    max_keys: 2

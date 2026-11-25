@@ -1,0 +1,9 @@
+version: 1
+stages:
+  - type: triage
+    rules:
+      - name: r
+        where: ["level == error"]
+        decision: quarantine
+        reason: "x"
+        prioridade: 1

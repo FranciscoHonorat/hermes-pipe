@@ -1,0 +1,25 @@
+# Fecha o ciclo human-in-the-loop (ADR 0016): o triage marca o que exige ack,
+# e o reconcile segura cada exceção até a decisão do operador chegar (ou o
+# prazo de 1 minuto, no tempo do evento, vencer). Decisões repetidas pelo
+# mesmo decision_id não têm efeito duplicado.
+version: 1
+stages:
+  - type: triage
+    rules:
+      - name: energia_anomala_por_peca
+        where: ["energy_wh > 120", "units_ok <= 1"]
+        decision: quarantine
+        reason: "Consumo energético alto para baixa entrega útil"
+        requires_ack: true
+      - name: degradacao_latencia_cobo
+        where: ["level == error", "latency_ms >= 250"]
+        decision: human_review
+        reason: "Latência crítica em operação colaborativa"
+        requires_ack: true
+
+  - type: reconcile
+    correlate_by: reading_id
+    window: 1m
+    max_keys: 1024
+    on_timeout: escalate
+    on_duplicate: drop

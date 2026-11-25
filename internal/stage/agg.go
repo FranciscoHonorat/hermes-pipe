@@ -18,14 +18,20 @@ import (
 // a amostra é um reservatório determinístico: a memória por chave tem teto.
 const MaxSamples = 512
 
-// Metric é uma métrica de agregação: count, sum:f, min:f, max:f, avg:f ou
-// pNN:f (percentil NN, ex.: p95:latency_ms).
+// Metric é uma métrica de agregação: count, sum:f, min:f, max:f, avg:f,
+// pNN:f (percentil NN, ex.: p95:latency_ms) ou ratio:num:den (razão das
+// somas, ex.: ratio:energy_wh:units_ok; ADR 0015).
 type Metric struct {
-	Kind  string // count, sum, min, max, avg, p
-	Field string
+	Kind  string  // count, sum, min, max, avg, p, ratio
+	Field string  // para ratio, o numerador
+	Den   string  // só para Kind == "ratio": o denominador
 	P     float64 // só para Kind == "p", em (0, 100]
 	Name  string  // nome do campo de saída
 }
+
+// StatusUndefinedDenominator é o valor de "<métrica>_status" quando a soma
+// dos denominadores de um ratio é zero: o valor sai null, nunca NaN ou Inf.
+const StatusUndefinedDenominator = "undefined_denominator"
 
 // ParseMetrics valida a lista de métricas. Lista vazia vira ["count"].
 func ParseMetrics(src []string) ([]Metric, error) {
@@ -59,6 +65,13 @@ func parseMetric(s string) (Metric, error) {
 	if !hasField || field == "" {
 		return Metric{}, errors.New("formato é tipo:campo")
 	}
+	if kind == "ratio" {
+		num, den, ok := strings.Cut(field, ":")
+		if !ok || num == "" || den == "" || strings.Contains(den, ":") {
+			return Metric{}, errors.New("formato é ratio:numerador:denominador")
+		}
+		return Metric{Kind: "ratio", Field: num, Den: den, Name: "ratio_" + num + "_" + den}, nil
+	}
 	m := Metric{Kind: kind, Field: field, Name: kind + "_" + field}
 	switch kind {
 	case "sum", "min", "max", "avg":
@@ -66,7 +79,7 @@ func parseMetric(s string) (Metric, error) {
 		p, ok := strings.CutPrefix(kind, "p")
 		v, err := strconv.ParseFloat(p, 64)
 		if !ok || err != nil || v <= 0 || v > 100 {
-			return Metric{}, errors.New("tipo desconhecido (use count, sum, min, max, avg ou pNN)")
+			return Metric{}, errors.New("tipo desconhecido (use count, sum, min, max, avg, pNN ou ratio)")
 		}
 		m.Kind, m.P = "p", v
 	}
@@ -104,6 +117,7 @@ type Group struct {
 type metricState struct {
 	n             int64
 	sum, min, max float64
+	den           float64 // só ratio: soma dos denominadores
 	samples       []float64
 	rng           uint64
 }
@@ -137,6 +151,10 @@ func (g *Group) Add(e event.Event, metrics []Metric) {
 		if m.Kind == "count" {
 			continue
 		}
+		if m.Kind == "ratio" {
+			g.states[i].addRatio(e, m)
+			continue
+		}
 		raw, ok := e.Get(m.Field)
 		if !ok {
 			continue
@@ -147,6 +165,31 @@ func (g *Group) Add(e event.Event, metrics []Metric) {
 		}
 		g.states[i].add(v, m.Kind == "p")
 	}
+}
+
+// addRatio soma numerador e denominador só quando os dois são números: um
+// evento sem par não puxa a razão para nenhum lado.
+func (s *metricState) addRatio(e event.Event, m Metric) {
+	num, ok := numberAt(e, m.Field)
+	if !ok {
+		return
+	}
+	den, ok := numberAt(e, m.Den)
+	if !ok {
+		return
+	}
+	s.n++
+	s.sum += num
+	s.den += den
+}
+
+func numberAt(e event.Event, path string) (float64, bool) {
+	raw, ok := e.Get(path)
+	if !ok {
+		return 0, false
+	}
+	v, ok := ToFloat(raw)
+	return v, ok && !math.IsNaN(v)
 }
 
 func (s *metricState) add(v float64, keepSamples bool) {
@@ -184,6 +227,11 @@ func (g *Group) Value(i int, m Metric) any {
 		return nil
 	}
 	switch m.Kind {
+	case "ratio":
+		if s.den == 0 {
+			return nil
+		}
+		return s.sum / s.den
 	case "sum":
 		return s.sum
 	case "min":
@@ -211,7 +259,11 @@ func (g *Group) Event(by []string, metrics []Metric, at time.Time, extra map[str
 		}
 	}
 	for i, m := range metrics {
-		fields[m.Name] = jsonValue(g.Value(i, m))
+		v := jsonValue(g.Value(i, m))
+		fields[m.Name] = v
+		if m.Kind == "ratio" && v == nil {
+			fields[m.Name+"_status"] = StatusUndefinedDenominator
+		}
 	}
 	maps.Copy(fields, extra)
 	if at.IsZero() {

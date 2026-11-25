@@ -1,0 +1,41 @@
+# Supervisão de células (Indústria 5.0, ADR 0015): classifica cada leitura,
+# fica só com o que precisa de gente, colapsa tempestades repetidas e entrega
+# um resumo por minuto, célula e regra, com energia por peça boa.
+version: 1
+stages:
+  - type: triage
+    default_decision: auto_ok
+    rules:
+      # A ordem importa: a primeira regra que casa vence.
+      - name: energia_anomala_por_peca
+        where: ["energy_wh > 120", "units_ok <= 1"]
+        decision: quarantine
+        reason: "Consumo energético alto para baixa entrega útil; verificar calibração da célula"
+        requires_ack: true
+      - name: degradacao_latencia_cobo
+        where: ["level == error", "latency_ms >= 250"]
+        decision: human_review
+        reason: "Latência crítica em operação colaborativa; avaliar redução de ritmo"
+        requires_ack: true
+
+  - type: filter
+    where: ["triage.decision != auto_ok"]
+
+  # Mesma célula e mesma regra em 30s é o mesmo incidente.
+  - type: dedup
+    by: [host, triage.rule]
+    window: 30s
+    max_keys: 1024
+
+  - type: window
+    size: 1m
+    lateness: 10s
+    by: [host, triage.rule, triage.decision]
+    metrics:
+      - count
+      - "p95:latency_ms"
+      - "sum:energy_wh"
+      - "sum:scrap_units"
+      - "ratio:energy_wh:units_ok"
+    max_open: 64
+    max_keys: 2048

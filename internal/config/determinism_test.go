@@ -159,6 +159,8 @@ var sampleStages = map[string]string{
 	"aggregate": `by: [host]` + "\n    metrics: [count, \"p50:n\"]\n    max_keys: 2",
 	"window":    `size: 10s` + "\n    by: [host]",
 	"dedup":     `by: [host]` + "\n    window: 1m",
+	"reconcile": "correlate_by: host\n    window: 30s\n    max_keys: 2",
+	"triage":    "rules:\n      - name: e\n        where: [\"level == error\"]\n        decision: quarantine\n        reason: x",
 }
 
 // TestStage_NoSideEffects roda o contrato de Stage em todo stage registrado:
