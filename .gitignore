@@ -4,3 +4,5 @@ coverage.html
 bench.txt
 old.txt
 new.txt
+ok.jsonl
+bad.jsonl

@@ -1,4 +1,0 @@
-{"line":6,"stage":"parse","error":"campo \"time\" ausente","raw":"{\"level\":\"error\",\"host\":\"web-01\",\"msg\":\"sem time\"}"}
-{"line":13,"stage":"parse","error":"JSON inválido: invalid character 'i' looking for beginning of value","raw":"isto não é json"}
-{"line":21,"stage":"parse","error":"campo \"time\" inválido: \"ontem\"","raw":"{\"time\":\"ontem\",\"level\":\"info\"}"}
-{"summary":{"read":43,"emitted":40,"dropped":0,"errored":3,"generated":0}}
